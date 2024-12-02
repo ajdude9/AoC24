@@ -22,7 +22,8 @@ public class AdventScript : MonoBehaviour
         switch(day)
         {
             case 1:
-                dayOne.run();
+                dayOne.run1();
+                dayOne.run2();
             break;
             case 2:
 
