@@ -5,10 +5,12 @@ using UnityEngine;
 public class AdventScript : MonoBehaviour
 {
     private DayOneScript dayOne;
+    private DayTwoScript dayTwo;
     // Start is called before the first frame update
     void Start()
     {
         dayOne = GameObject.Find("ScriptHolder").GetComponent<DayOneScript>();
+        dayTwo = GameObject.Find("ScriptHolder").GetComponent<DayTwoScript>();
     }
 
     // Update is called once per frame
@@ -26,7 +28,8 @@ public class AdventScript : MonoBehaviour
                 dayOne.run2();
             break;
             case 2:
-
+                dayTwo.run1();
+                dayTwo.run2();
             break;
             case 3:
 
