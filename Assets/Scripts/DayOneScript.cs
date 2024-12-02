@@ -70,22 +70,48 @@ public class DayOneScript : MonoBehaviour
             Debug.Log("Found " + count + " repeats.");
         }
         */
+
+        /**
         int tally = 0;//Set the total tally to 0
-        foreach(int number in distinctList)//For each distinct number
+        foreach(int number in leftList)//For each number in the left list
         {
             foreach(int compared in rightList)//For each number in the right list
             {
-                if(number == compared)//If the distinct number from the left list is the same as the one in the right
+                if(number == compared)//If the number from the left list is the same as the one in the right
                 {
                     tally = tally + 1;//Increase the tally by one
                 }                
             }
             repeatedList.Add(tally);//Add how many instances there are of the current number in the right list
             tally = 0;//Reset the tally
+            
         }
-        for(int i = 0; i < distinctList.Count; i++)//Iterate through the list
+        */
+        for(int i = 0; i < leftList.Count; i++)
         {
-            total = total + (distinctList[i] * repeatedList[i]);//Sum the total as the number in the distinct list multiplied by the number of times it appears
+            
+            int runningCount = 0;
+            for(int j = 0; j < rightList.Count; j++)
+            {
+                //Debug.Log("Comparing " + leftList[i] + " with " + rightList[j]);
+                if(leftList[i] == rightList[j])
+                {
+                    //Debug.Log(leftList[i] + " and " + rightList[j] + " are the same.");
+                    runningCount = runningCount + 1;
+                }
+            }
+            repeatedList.Add(runningCount);
+            runningCount = 0;
+        }
+        total = 0;
+        for(int i = 0; i < leftList.Count; i++)//Iterate through the list
+        {
+            //Debug.Log(leftList[i] + " appears " + repeatedList[i] + " times. |" + i);
+            //Debug.Log("Result: " + leftList[i] * repeatedList[i] + " |" + i);
+            Debug.Log("Old Total: " + total);
+            total = total + (leftList[i] * repeatedList[i]);
+            Debug.Log("New Total: " + total);
+            
         }
         if(total >= 24070620)//Known too-high value
         {
@@ -97,6 +123,14 @@ public class DayOneScript : MonoBehaviour
         }
         else
         {
+            if(total <= 2742558)
+            {
+                Debug.Log("ERROR: Total Value is too low. Incorrect Value: " + total);
+                if(total == 2742558)
+                {
+                    Debug.Log("ERROR: Repeated Known Incorrect Value.");
+                }
+            }
             Debug.Log(total);
         }
         reader.Close();
