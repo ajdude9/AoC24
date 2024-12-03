@@ -13,6 +13,20 @@ public class DayTwoScript : MonoBehaviour
     public void run1()
     {
         readLists();
+
+        
+        for(int i = 0; i < hashList.Count; i++)//Go through each entry in the list, which is a list in itself
+        {
+            for(int j = 0; i < hashList[i].Count - 1; j++)//Go through each entry in the nested list except the last, which contains the numbers
+            {
+                if(hashList[i][j] > hashList[i][j+1])
+                {
+
+                }
+            }
+        }
+        
+        Debug.Log(hashList[0][0]);//Print out the item contained in the first list object's first position
     }
 
     public void run2()
