@@ -15,11 +15,15 @@ public class DayFourScript : MonoBehaviour
         int finalInt = 0;
         readLists();
         finalInt = wordSearch(hashList);
-        Debug.Log(finalInt);
+        Debug.Log("XMAS: " + finalInt);
     }
 
     public void run2()
     {
+        int finalInt = 0;
+        readLists();
+        finalInt = crossSearch(hashList);
+        Debug.Log("CROSSMAS: " + finalInt);
 
     }
 
@@ -151,5 +155,90 @@ public class DayFourScript : MonoBehaviour
             }
         }
         return totalXmas;
+    }
+
+    int crossSearch(List<List<char>> map)
+    {
+        Debug.Log("Running CrossSearch");
+        int totalCrossmas = 0;
+        for (int i = 1; i < map.Count; i++)//For the size of the hashmap
+        {
+            Debug.Log("Current line depth: " + i + "/" + map.Count);
+            for (int j = 0; j < map[i].Count; j++)//For the size of all the characters on one particular line
+            {
+                //Debug.Log("Reading Y: " + i + " and X: " + j);
+                //Debug.Log("Char: " + map[i][j] + " |" + i + j);
+               
+                
+                if (map[i][j].Equals('A'))//We only need to care about the centre being A
+                {
+                    /**
+                    //Northeast ↗
+                    if (i > 0 && j < (map[i].Count - 1))
+                    {
+                        
+                    }                    
+                    //Southwest ↙
+                    if (i < map.Count - 1 && j > 0)
+                    {
+                        
+                    }
+                    //Northwest ↖
+                    if (i > 0 && j > 0)
+                    {
+                        
+                    }
+                    //Southeast ↘
+                    if (i < map.Count - 1 && j < map[i].Count - 1)
+                    {
+                        
+                    }
+                    **/
+                    //Check to make sure we're not in the perimiter
+                    if(i > 0 && i < map.Count - 1 && j > 0 && j < map[i].Count - 1)
+                    {
+                        char[] chars = { 
+                        //Northwest ↖
+                            map[i-1][j-1],
+                        //Northeast ↗
+                            map[i-1][j+1],
+                        //Southwest ↙
+                            map[i+1][j-1],
+                        //Southeast ↘
+                            map[i+1][j+1]
+                        };
+                        /**
+                        * Valid Combos:
+                        * MSMS (Vertical)
+                        * SMSM (Vertical 2)
+                        * MMSS (Horizontal)
+                        * SSMM (Horizontal 2)
+                        */
+                        /**
+                        * Invalid Combos:
+                        * MSSM (MAM SAS)
+                        * SMMS (SAS MAM)                        
+                        */
+                        string crossmas = new string(chars);
+                        switch(crossmas)
+                        {
+                            case "MSMS":
+                                totalCrossmas = totalCrossmas + 1;
+                            break;
+                            case "SMSM":
+                                totalCrossmas = totalCrossmas + 1;
+                            break;
+                            case "MMSS":
+                                totalCrossmas = totalCrossmas + 1;
+                            break;
+                            case "SSMM":
+                                totalCrossmas = totalCrossmas + 1;
+                            break;                            
+                        }
+                    }
+                }
+            }
+        }
+        return totalCrossmas;
     }
 }
