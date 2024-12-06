@@ -75,17 +75,27 @@ public class DayTwoScript : MonoBehaviour
         runLogic(hashList);
         finalInt = checkSafety(safetyList);//Find all safe lists
         for (int i = 0; i < unsafeList.Count; i++)//Parse through all the known false entries in the unsafeList
-        {
-            for (int j = 0; j < hashList[unsafeList[i]].Count; j++)
+        {                                   
+            for (int j = 0; j < hashList[unsafeList[i]].Count; j++)//Parse through every list entry in a single false list
             {
-                safetyList[unsafeList[i]] = runSingleCheck(hashList[unsafeList[i]], j);//Run a single check of a list known to be false, with one of the entries ignored
+                List<int> modifiedList = new List<int>();//Create a new list to store the values from this entry
+                for(int k = 0; k < hashList[unsafeList[i]].Count; k++)//Duplicate the list we're testing to remove values from
+                {
+                    modifiedList.Add(hashList[unsafeList[i]][k]);
+                }
+                modifiedList.RemoveAt(j);//Remove a single entry from the modified list
+                if(runSingleCheck(modifiedList))//Run a single check of a list known to be false, with one of the entries ignored
+                {
+                    safetyList[unsafeList[i]] = true;//If it comes back true, we know a single value can be removed
+                }
+                
             }
         }
         finalInt = checkSafety(safetyList);
-        if(finalInt >= 668)
+        if (finalInt >= 668)
         {
             Debug.Log("ERROR: Final Value too high. Final Value: " + finalInt);
-            if(finalInt == 668)
+            if (finalInt == 668)
             {
                 Debug.Log("Final Value same as known incorrect final value.");
             }
@@ -153,7 +163,7 @@ public class DayTwoScript : MonoBehaviour
         }
     }
 
-    bool runSingleCheck(List<int> singleList, int ignoredInt)
+    bool runSingleCheck(List<int> singleList)
     {
         bool safe = true;
         bool increasing;//If the list is increasing
@@ -167,79 +177,40 @@ public class DayTwoScript : MonoBehaviour
         }
         for (int i = 0; i < singleList.Count - 1; i++)
         {
-            if (i != ignoredInt || i + 1 == ignoredInt)//If we're currently checking the ignored entry, OR if the next entry is to be ignored
+
+            if (singleList[i] > singleList[i + 1])
             {
-                if (singleList[i] > singleList[i + 1])
+                if (singleList[i] - singleList[i + 1] > 3 || singleList[i] - singleList[i + 1] < -3 || singleList[i] - singleList[i + 1] == 0)//If the difference is greater than 3 OR zero
                 {
-                    if (singleList[i] - singleList[i + 1] > 3 || singleList[i] - singleList[i + 1] < -3 || singleList[i] - singleList[i + 1] == 0)//If the difference is greater than 3 OR zero
-                    {
-                        safe = false;
-                    }
-                }
-                else
-                {
-                    if (singleList[i + 1] - singleList[i] > 3 || singleList[i + 1] - singleList[i] < -3 || singleList[i + 1] - singleList[i] == 0)//If the difference is greater than 3 OR zero
-                    {
-                        safe = false;
-                    }
-                }
-                if (increasing)//If the values are increasing
-                {
-                    if (singleList[i] >= singleList[i + 1])//If the next value isn't bigger than the last, or is equal to it
-                    {
-                        //Debug.Log(readableList[i] + " is decreasing to " + readableList[i+1]);
-                        safe = false;
-
-
-                    }
-                }
-                else//If the values are decreasing
-                {
-                    if (singleList[i] <= singleList[i + 1])//If the next value isn't smaller than the last, or is equal to it
-                    {
-                        //Debug.Log(readableList[i] + " is increasing to " + readableList[i+1]);
-                        safe = false;
-                    }
+                    safe = false;
                 }
             }
-            else//We're currently checking the ignored entry OR the next entry is going to be the ignored one
+            else
             {
-                if (i != ignoredInt && i+2 < singleList.Count)//If we're not checking the ignored entry - so the next entry will be ignored, and we can skip an entry
+                if (singleList[i + 1] - singleList[i] > 3 || singleList[i + 1] - singleList[i] < -3 || singleList[i + 1] - singleList[i] == 0)//If the difference is greater than 3 OR zero
                 {
-                    if (singleList[i] > singleList[i + 2])
-                    {
-                        if (singleList[i] - singleList[i + 2] > 3 || singleList[i] - singleList[i + 2] < -3 || singleList[i] - singleList[i + 2] == 0)//If the difference is greater than 3 OR zero
-                        {
-                            safe = false;
-                        }
-                    }
-                    else
-                    {
-                        if (singleList[i + 2] - singleList[i] > 3 || singleList[i + 2] - singleList[i] < -3 || singleList[i + 2] - singleList[i] == 0)//If the difference is greater than 3 OR zero
-                        {
-                            safe = false;
-                        }
-                    }
-                    if (increasing)//If the values are increasing
-                    {
-                        if (singleList[i] >= singleList[i + 2])//If the next value isn't bigger than the last, or is equal to it
-                        {
-                            //Debug.Log(readableList[i] + " is decreasing to " + readableList[i+1]);
-                            safe = false;
-
-
-                        }
-                    }
-                    else//If the values are decreasing
-                    {
-                        if (singleList[i] <= singleList[i + 2])//If the next value isn't smaller than the last, or is equal to it
-                        {
-                            //Debug.Log(readableList[i] + " is increasing to " + readableList[i+1]);
-                            safe = false;
-                        }
-                    }
+                    safe = false;
                 }
             }
+            if (increasing)//If the values are increasing
+            {
+                if (singleList[i] >= singleList[i + 1])//If the next value isn't bigger than the last, or is equal to it
+                {
+                    //Debug.Log(readableList[i] + " is decreasing to " + readableList[i+1]);
+                    safe = false;
+
+
+                }
+            }
+            else//If the values are decreasing
+            {
+                if (singleList[i] <= singleList[i + 1])//If the next value isn't smaller than the last, or is equal to it
+                {
+                    //Debug.Log(readableList[i] + " is increasing to " + readableList[i+1]);
+                    safe = false;
+                }
+            }
+
         }
         return safe;
     }
