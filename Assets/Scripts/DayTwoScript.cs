@@ -11,10 +11,9 @@ using UnityEngine;
 public class DayTwoScript : MonoBehaviour
 {
     StreamReader reader = new StreamReader("Inputs/input2.txt");
-    List<List<int>> hashList = new List<List<int>>();
-    List<bool> safetyList = new List<bool>();
-    List<int> safetyViolations = new List<int>();
-    List<int> singleErrorLists = new List<int>();
+    List<List<int>> hashList = new List<List<int>>();//A list containing the input from the provided input file
+    List<bool> safetyList = new List<bool>();//A list containing either 'true' or 'false' for whether an entry is safe
+    List<int> unsafeList = new List<int>();//The locations of unsafe entries
     int totalViolations = 0;
     
     public void run1()
@@ -71,47 +70,10 @@ public class DayTwoScript : MonoBehaviour
 
     public void run2()
     {
-        
         readLists();//Read in all the numbers
-        totalViolations = 0;
-        int finalInt = 0;//The final number of 'safe' entries
-        bool safe;//Whether or not an entry is 'safe'
-        for(int i = 0; i < hashList.Count; i++)//Go through each entry in the list, which is a list in itself
-        {
-            safe = true;//Assume that the value is initially safe
-            for(int j = 0; j < hashList[i].Count - 1; j++)//Go through each entry in the nested list (except the last) which contains the numbers
-            {
-                //Debug.Log("Checking " + hashList[i][j] + " and " + hashList[i][j+1] + " |" + j);
-                if(hashList[i][j] > hashList[i][j+1])//If the next number is less than the current number
-                {
-                    if(hashList[i][j] - hashList[i][j+1] > 3 || hashList[i][j] - hashList[i][j+1] < -3 || hashList[i][j] - hashList[i][j+1] == 0)//If the difference is greater than 3 OR zero
-                    {
-                        //Debug.Log(hashList[i][j] + " and " + hashList[i][j+1] + " are unsafe");
-                        safe = false;//It's unsafe
-                        totalViolations = totalViolations + 1;//Increase the total number of violations by one
-                        
-                    }
-                }
-                else//If the next number is greater than the current number
-                {
-                    if(hashList[i][j+1] - hashList[i][j] > 3 || hashList[i][j+1] - hashList[i][j] < -3 || hashList[i][j+1] - hashList[i][j] == 0)//If the difference is greater than 3 OR zero
-                    {
-                        //Debug.Log(hashList[i][j] + " and " + hashList[i][j+1] + " are unsafe");
-                        safe = false;//It's unsafe
-                        totalViolations = totalViolations + 1;//Increase the total number of violations by one
-                        
-                    }
-                }
-                
-            }
-            
-            
-            safe = checkDirection(hashList[i], safe);//Ensure all numbers are either ascending or descending              
-            safetyViolations[i] = totalViolations;//Count this list's total number of violations
-            //Debug.Log("Final Verdict: " + safe + " |" + i);
-            safetyList.Add(safe);//Add whether or not this list is safe
-            totalViolations = 0;//Reset the total violations for the next list
-        }
+        int finalInt;
+        runLogic(hashList);
+        finalInt = checkSafety(safetyList);//Find all safe lists
         
     }
 
@@ -128,14 +90,68 @@ public class DayTwoScript : MonoBehaviour
                 hashList[count].Add(int.Parse(words[i]));//Extract the number and add it to the nested list
                 
             }
-            safetyViolations.Add(0);//Create a new entry in the safety violations list, and set it to 0
-            /**
-            * Each safety violations sublist only needs to contain one number - the total violations for that
-            * particular related list entry.
-            */
+           
+           
             count = count + 1;//A line has been parsed; create a new nested list entry to store the next line
         }
     }       
+
+    void runLogic(List<List<int>> provList)
+    {
+        bool safe;
+        for(int i = 0; i < hashList.Count; i++)//Go through each entry in the list, which is a list in itself
+        {
+            safe = true;//Assume that the value is initially safe
+            for(int j = 0; j < hashList[i].Count - 1; j++)//Go through each entry in the nested list (except the last) which contains the numbers
+            {
+                //Debug.Log("Checking " + hashList[i][j] + " and " + hashList[i][j+1] + " |" + j);
+                if(hashList[i][j] > hashList[i][j+1])//If the next number is less than the current number
+                {
+                    if(hashList[i][j] - hashList[i][j+1] > 3 || hashList[i][j] - hashList[i][j+1] < -3 || hashList[i][j] - hashList[i][j+1] == 0)//If the difference is greater than 3 OR zero
+                    {
+                        //Debug.Log(hashList[i][j] + " and " + hashList[i][j+1] + " are unsafe");
+                        safe = false;//It's unsafe
+                    }
+                }
+                else//If the next number is greater than the current number
+                {
+                    if(hashList[i][j+1] - hashList[i][j] > 3 || hashList[i][j+1] - hashList[i][j] < -3 || hashList[i][j+1] - hashList[i][j] == 0)//If the difference is greater than 3 OR zero
+                    {
+                        //Debug.Log(hashList[i][j] + " and " + hashList[i][j+1] + " are unsafe");
+                        safe = false;//It's unsafe
+                    }
+                }
+                
+            }            
+            safe = checkDirection(hashList[i], safe);//Ensure all numbers are either ascending or descending  
+            
+            Debug.Log("Final Verdict: " + safe + " |" + i);
+            if(safe)
+            {
+                safetyList[i] = safe;//Add whether or not this list is safe
+            }
+        }
+    }
+
+    bool runSingleCheck(List<int> singleList)
+    {
+        bool safe = true;
+        for(int i = 0; i < singleList.Count - 1; i++)
+        {
+            if(singleList[i] > singleList[i+1])
+            {
+                if(singleList[i] - singleList[i] > 3 || singleList[i] - singleList[i] < -3 || singleList[i] - singleList[i] == 0)//If the difference is greater than 3 OR zero
+                {
+                        
+                }
+            }
+            else
+            {
+
+            }
+        }
+        return safe;
+    }
     /**
     * Check the direction numbers in a list are moving
     * @readableList - The list of numbers to check
@@ -186,18 +202,11 @@ public class DayTwoScript : MonoBehaviour
             {
                 count = count + 1;//Increase the number of known safe entries by one
             }
-        }
-        return count;//Return how many entries are safe
-    }
-
-    void seekSingleErrors(List<int> errorList)
-    {
-        for(int i = 0; i < errorList.Count; i++)
-        {
-            if(errorList[i] == 1)
+            else
             {
-                singleErrorLists.Add(i);
+                unsafeList.Add(i);
             }
         }
+        return count;//Return how many entries are safe
     }
 }
