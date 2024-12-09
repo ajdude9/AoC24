@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class DayTwoScript : MonoBehaviour
 {
-    StreamReader reader = new StreamReader("Inputs/input2Test.txt");
+    StreamReader reader = new StreamReader("Inputs/input2.txt");
     List<List<int>> hashList = new List<List<int>>();//A list containing the input from the provided input file
     List<bool> safetyList = new List<bool>();//A list containing either 'true' or 'false' for whether an entry is safe
     List<int> unsafeList = new List<int>();//The locations of unsafe entries
@@ -18,6 +18,7 @@ public class DayTwoScript : MonoBehaviour
 
     public void run1()
     {
+        /**
         readLists();//Read in all the numbers
 
         int finalInt = 0;//The final number of 'safe' entries
@@ -64,33 +65,63 @@ public class DayTwoScript : MonoBehaviour
         else
         {
             Debug.Log("run1 Final Int: " + finalInt);
+            if(finalInt == 2 || finalInt == 334)
+            {
+                Debug.Log("Correct value found!");
+            }
         }
         //Debug.Log(hashList[0][0]);//Print out the item contained in the first list object's first position
+        */
     }
 
     public void run2()
     {
         readLists();//Read in all the numbers
+        Debug.Log("hashList has " + hashList.Count + " lines");
+        for(int a = 0; a < hashList.Count; a++)
+        {            
+            for(int b = 0; b < hashList[a].Count; b++)
+            {
+                Debug.Log("Line " + a + ", entry " + b);
+                Debug.Log(hashList[a][b]);
+            }
+        }
         int finalInt;
         runLogic(hashList);
         finalInt = checkSafety(safetyList);//Find all safe lists
-        for (int i = 0; i < unsafeList.Count; i++)//Parse through all the known false entries in the unsafeList
-        {                                   
-            for (int j = 0; j < hashList[unsafeList[i]].Count; j++)//Parse through every list entry in a single false list
+        Debug.Log("Pre-Verdict: " + finalInt);
+        Debug.Log("Hash List Size: " + hashList.Count);
+        Debug.Log("Safety List Size: " + safetyList.Count);
+        for (int i = 0; i < hashList.Count; i++)//Parse through all the known false entries in the unsafeList
+        {
+            Debug.Log("Checking entry at: " + i);
+            if (!safetyList[i])//If the entry reads as false
             {
-                List<int> modifiedList = new List<int>();//Create a new list to store the values from this entry
-                for(int k = 0; k < hashList[unsafeList[i]].Count; k++)//Duplicate the list we're testing to remove values from
+                Debug.Log("Found false entry at " + i);
+                for (int j = 0; j < hashList[i].Count; j++)//Parse through every list entry in a single false list
                 {
-                    modifiedList.Add(hashList[unsafeList[i]][k]);
+                    List<int> modifiedList = new List<int>();//Create a new list to store the values from this entry
+                    for (int k = 0; k < hashList[i].Count; k++)//Duplicate the list we're testing to remove values from
+                    {
+                        modifiedList.Add(hashList[i][k]);
+                    }
+                    modifiedList.RemoveAt(j);//Remove a single entry from the modified list
+                    if (runSingleCheck(modifiedList))//Run a single check of a list known to be false, with one of the entries ignored
+                    {                        
+                        safetyList[i] = true;//If it comes back true, we know a single value can be removed
+                        Debug.Log("List at position " + i + " is marked as true");                        
+                    }                    
+
                 }
-                modifiedList.RemoveAt(j);//Remove a single entry from the modified list
-                if(runSingleCheck(modifiedList))//Run a single check of a list known to be false, with one of the entries ignored
-                {
-                    safetyList[unsafeList[i]] = true;//If it comes back true, we know a single value can be removed
-                }
-                
+                Debug.Log("Final Revised Verdict for " + i + ": " + safetyList[i]);
             }
+            else
+            {
+                Debug.Log(i + " is already marked as true.");
+            }
+
         }
+        finalInt = 0;
         finalInt = checkSafety(safetyList);
         if (finalInt >= 668)
         {
@@ -112,13 +143,23 @@ public class DayTwoScript : MonoBehaviour
         string line;//The text contained on a particular line
         int count = 0;//How many lines have been read
         while ((line = reader.ReadLine()) != null)//While there are still lines to be read
-        {
+        {       
+            //Debug.Log("Full Line: " + line);
             string[] words = line.Split(char.Parse(" "));//Split words based on spaces
+            for(int j = 0; j < words.Length; j++)
+            {
+                //Debug.Log("Reading Line: " + count);
+                //Debug.Log("Found " + words[j]);
+            }
             hashList.Add(new List<int>());//Create a new nested list
             for (int i = 0; i < words.Length; i++)//For each word in the list
-            {
+            {                
                 hashList[count].Add(int.Parse(words[i]));//Extract the number and add it to the nested list
-
+                //Debug.Log("Reading string " + words[i]);                
+            }
+            for(int k = 0; k < hashList[count].Count; k++)
+            {
+                //Debug.Log("Hash List Stored: " + hashList[count][k]);
             }
 
 
@@ -155,11 +196,10 @@ public class DayTwoScript : MonoBehaviour
             }
             safe = checkDirection(hashList[i], safe);//Ensure all numbers are either ascending or descending  
 
-            Debug.Log("Final Verdict: " + safe + " |" + i);
-            if (safe)
-            {
-                safetyList.Add(safe);//Add whether or not this list is safe
-            }
+            //Debug.Log("Final Verdict: " + safe + " |" + i);
+            
+            safetyList.Add(safe);//Add whether or not this list is safe
+            
         }
     }
 
@@ -266,7 +306,7 @@ public class DayTwoScript : MonoBehaviour
             }
             else
             {
-                unsafeList.Add(i);
+                unsafeList.Add(i);//Mark the location of an unsafe entry
             }
         }
         return count;//Return how many entries are safe
