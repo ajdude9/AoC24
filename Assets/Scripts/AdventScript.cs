@@ -6,14 +6,14 @@ public class AdventScript : MonoBehaviour
 {
     private DayOneScript dayOne;
     private DayTwoScript dayTwo;
-    //private DayThreeScript dayThree;
+    private DayThreeScript dayThree;
     private DayFourScript dayFour;
     // Start is called before the first frame update
     void Start()
     {
         dayOne = GameObject.Find("ScriptHolder").GetComponent<DayOneScript>();
         dayTwo = GameObject.Find("ScriptHolder").GetComponent<DayTwoScript>();
-        //dayThree = GameObject.Find("ScriptHolder").GetComponent<DayThreeScript>();
+        dayThree = GameObject.Find("ScriptHolder").GetComponent<DayThreeScript>();
         dayFour = GameObject.Find("ScriptHolder").GetComponent<DayFourScript>();
     }
 
@@ -36,7 +36,8 @@ public class AdventScript : MonoBehaviour
                 dayTwo.run2();
             break;
             case 3:
-
+                dayThree.run1();
+                dayThree.run2();
             break;
             case 4:
                 dayFour.run1();
