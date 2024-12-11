@@ -103,6 +103,9 @@ public class AdventScript : MonoBehaviour
             case 24:
 
             break;
+            case 25:
+                Debug.Log("Hello World");
+            break;
             
         }
     }    
